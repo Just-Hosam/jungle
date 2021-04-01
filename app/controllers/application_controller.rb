@@ -15,6 +15,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :enhanced_cart
 
+  def counts
+    {:products_count => Product.all.count, :categories_count => Category.all.count}
+  end
+  helper_method :counts
+
   def cart_subtotal_cents
     enhanced_cart.map {|entry| entry[:product].price_cents * entry[:quantity]}.sum
   end
