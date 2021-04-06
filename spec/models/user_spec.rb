@@ -104,13 +104,87 @@ RSpec.describe User, type: :model do
         password: 'test',
         password_confirmation: 'test'
       )
-      print user.errors.full_messages
 
       expect(user).to_not be_valid
       expect(user.errors.full_messages).to include "Password is too short (minimum is 8 characters)"
     end
 
 
+
+  end
+
+  describe '.authenticate_with_credentials' do
+    it 'should find and authinticate user, then give access' do
+      createdUser = User.create(
+        name: 'Hosam',
+        email: 'hosam@test.com',
+        password: 'testing123',
+        password_confirmation: 'testing123'
+      )
+      checkedUser = User.authenticate_with_credentials('hosam@test.com', 'testing123')
+
+      expect(checkedUser).to eq(createdUser)
+    end
+
+    it 'should find and authinticate user, then deny access' do
+      createdUser = User.create(
+        name: 'Hosam',
+        email: 'hosam@test.com',
+        password: 'testing123',
+        password_confirmation: 'testing123'
+      )
+      checkedUser = User.authenticate_with_credentials('hosam@test.com', 'testing321')
+
+      expect(checkedUser).to eq(nil)
+    end
+
+    it 'should find and authinticate user after trimming whitespace, then give access' do
+      createdUser = User.create(
+        name: 'Hosam',
+        email: 'hosam@test.com',
+        password: 'testing123',
+        password_confirmation: 'testing123'
+      )
+      checkedUser = User.authenticate_with_credentials('  hosam@test.com     ', 'testing123')
+
+      expect(checkedUser).to eq(createdUser)
+    end
+
+    it 'should find and authinticate user after trimming whitespace, then deny access' do
+      createdUser = User.create(
+        name: 'Hosam',
+        email: 'hosam@test.com',
+        password: 'testing123',
+        password_confirmation: 'testing123'
+      )
+      checkedUser = User.authenticate_with_credentials('  hosam@test.com     ', 'testing321')
+
+      expect(checkedUser).to eq(nil)
+    end
+
+    it 'should find and authinticate user regardless of letter case, then give access' do
+      createdUser = User.create(
+        name: 'Hosam',
+        email: 'hosam@test.com',
+        password: 'testing123',
+        password_confirmation: 'testing123'
+      )
+      checkedUser = User.authenticate_with_credentials('HOSAM@test.com', 'testing123')
+
+      expect(checkedUser).to eq(createdUser)
+    end
+
+    it 'should find and authinticate user regardless of letter case, then deny access' do
+      createdUser = User.create(
+        name: 'Hosam',
+        email: 'hosam@test.com',
+        password: 'testing123',
+        password_confirmation: 'testing123'
+      )
+      checkedUser = User.authenticate_with_credentials('HOSAM@test.com', 'testing321')
+
+      expect(checkedUser).to eq(nil)
+    end
 
   end
 end
